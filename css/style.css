@@ -1,6 +1,23 @@
 body {
   text-align: center;
 }
-.container {
+main {
   display: flex;
+  flex-flow: wrap;
+}
+header {
+/*  background-color: lightgrey; */
+}
+.cat-display {
+  background-color: lightgrey;
+  width: 80%;
+}
+.catList {
+  background-color: lightgrey;
+  width: 20%;
+}
+.container {
+  background-color: grey;
+  font-size: 2em;
+  line-height: 2em;
 }

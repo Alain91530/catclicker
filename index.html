@@ -10,22 +10,26 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Score display -->
-  <header>
-    <H1 class='title'>Hey! we are click loving cats!</h1>
-    <h2> Click on us!</h2>
-    </header>
-    <main>
+  <main>
+    <aside id="navMenu" class="catList">
+      <h3>Choose a cat</h3>
+    </aside>
+    <article class="cat-display">
+      <header>
+        <H1 class='title'>Hey! we are click loving cats!</h1>
+        <h2> Click on us!</h2>
+      </header>
       <div id="cats" class="container">
-
+        <figure id="the-cat">
+          <figcaption>
+            Choose a cat on the left
+          </figcaption>
+        </figure>
       </div>
-      <p class="click-counter">
-        <span>We have been clicked</span>
-        <span id='clicks'>0</span>
-        <span> times and I love it</span>
-      </p>
-    </main>
+    </article>
+  </main>
 
-  <script src="js/app.js"></script>
 </body>
+<script src="js/app.js"></script>
+
 </html>
