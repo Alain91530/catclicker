@@ -1,89 +1,107 @@
-/* The elements where we await clicks */
-let theCats = document.getElementsByClassName('cat');
-
+/******************************************************************************/
+/*                Model                                                       */
+/******************************************************************************/
 /* Class for cats */
 class Cat {
   constructor(name,picture) {
     this.name = name;
     this.picture = picture;
-    this.clicks = 0;
+    this.clickCount = 0;
   }
 }
 
 /* initialize array of different cats */
-let allCats = [
-  new Cat('tom', 'img/cat-1.jpg'),
-  new Cat('pussy cat','img/cat-2.jpg'),
-  new Cat('hercule', 'img/cat-3.jpg'),
-  new Cat('titus', 'img/cat-4.jpg'),
-  new Cat('kitty', 'img/cat-5.jpg')
-];
-function catClicked(cat) {
-  let theCat;
-  /* which cat is clicked */
-  for (let myCat of allCats) {
-    if (myCat.picture===cat.target.getAttribute('src')) {
-      theCat = myCat;
+let model = {
+  currentCat: null,
+  cats: [
+    new Cat('tom', 'img/cat-1.jpg'),
+    new Cat('pussy cat','img/cat-2.jpg'),
+    new Cat('hercule', 'img/cat-3.jpg'),
+    new Cat('titus', 'img/cat-4.jpg'),
+    new Cat('kitty', 'img/cat-5.jpg')
+  ]
+};
+/******************************************************************************/
+
+/******************************************************************************/
+/*                 View 1: the menu                                           */
+/******************************************************************************/
+/* The elements where we await clicks */
+//let theCats = document.getElementsByClassName('cat');
+let listView = {
+  init: function() {
+    this.catList = document.getElementById('navMenu');
+    this.render();
+  },
+  render: function() {
+    let cats = octopus.getCats();
+    let catElement;
+    let cat;
+    let i;
+
+    for (i = 0; i< cats.length; i++) {
+      cat = cats[i];
+      /* for each cat construct an html node */
+      catElement = document.createElement('p');
+      catElement.textContent = `${cat.name}`;
+      catElement.className+='navElement';
+      /*Append the node to the menu */
+
+      catElement.addEventListener('click', (function(catClicked) {
+        return function() {
+          octopus.setCurrentCat(catClicked);
+          catView.render();
+        };
+      })(cat));
+      this.catList.appendChild(catElement);
+      /* Set an event listener when a cat name is clicked */
     }
   }
-  theCat.clicks++;
-  document.getElementById('click-counter').textContent=
-      `You clicked me ${theCat.clicks} times`;
-}
-
-/* Show a cat in the cats container */
-function showCat(cat){
-  let theCat;
-  let displayCat;
-  let catContent;
-  let catName=cat.target.textContent;
-
-  /* find the prpoer cat */
-  for (let myCat of allCats) {
-    if (myCat.name===catName) {
-      theCat = myCat;
-    }
+};
+/******************************************************************************/
+/*                View 2 : the cat to click                                   */
+/******************************************************************************/
+let catView = {
+  init: function() {
+    this.image = document.getElementById('cat-image');
+    this.clicks = document.getElementById('cat-clicks');
+    this.name = document.getElementById('cat-name');
+    this.render();
+  },
+  render: function() {
+    let currentCat = octopus.getCurrentCat();
+    this.clicks.textContent = `You clicked me ${currentCat.clickCount} times`;
+    this.name.textContent = `${currentCat.name}`;
+    this.image.src = currentCat.picture;
+    this.image.addEventListener('click', octopus.addClick);
   }
-  /* Remove the previuos cat */
-  document.getElementById('the-cat').remove();
+};
 
-  /* Contruct the figure node to display the cat */
-  displayCat = document.createElement('figure');
-  displayCat.setAttribute('id', 'the-cat');
-  catContent = document.createElement('figcaption');
-  catContent.appendChild(document.createTextNode(`${theCat.name}`));
-  displayCat.appendChild(catContent);
-  catContent = document.createElement('img');
-  catContent.setAttribute('id','cat-image');
-  catContent.setAttribute('src',`${theCat.picture}`);
-  catContent.setAttribute('alt','""');
-  displayCat.appendChild(catContent);
-  catContent = document.createElement('figcaption');
-  catContent.setAttribute('id','click-counter');
-  catContent.appendChild(document.createTextNode(`You clicked me ${theCat.clicks} times`));
-  displayCat.appendChild(catContent);
-  /* append the cat to the cat container */
-  document.getElementById('cats').appendChild(displayCat);
-  /* Set an event listener when the cat is clicked */
-  document.getElementById('cat-image').addEventListener('click', catClicked);
-}
+/******************************************************************************/
+/*              Octopus                                                       */
+/******************************************************************************/
+let octopus = {
+  init: function() {
+    model.currentCat = model.cats[0];
+    listView.init();
+    catView.init();
+  },
+  getCurrentCat: function() {
+    return model.currentCat;
+  },
+  getCats() {
+    return model.cats;
+  },
+  setCurrentCat: function(cat) {
+    model.currentCat = cat;
+  },
+  addClick: function() {
+    model.currentCat.clickCount++;
+    catView.render();
+  }
+};
 
+/******************************************************************************/
 
-/* initialize the cats menu */
-for (let cat of allCats) {
-  /* for each cat construct an html node */
-  let menuElement = document.createElement('p');
-  let textElement = document.createTextNode(`${cat.name}`);
-  menuElement.className+='navElement';
-  menuElement.appendChild(textElement);
-  /*Append the node to the menu */
-  document.getElementById('navMenu').appendChild(menuElement);
-  /* Set an event listener when a cat name is clicked */
-  document.getElementById('navMenu').lastChild.addEventListener('click', showCat);
-}
-for (let cat of theCats) {
-  cat.addEventListener('click', function(){
-    //the cat has been clicked
-    cat.clicks++;
-  }, false);
-}
+/* Just initialize the game */
+octopus.init();

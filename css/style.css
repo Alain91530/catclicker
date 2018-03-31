@@ -1,5 +1,8 @@
 body {
+  font-family: sans-serif;
   text-align: center;
+  margin: auto;
+  max-width: 900px;
 }
 main {
   display: flex;
@@ -14,10 +17,14 @@ header {
 }
 .catList {
   background-color: lightgrey;
+  font-size: 1.5em;
   width: 20%;
 }
 .container {
   background-color: grey;
+  display: flex;
   font-size: 2em;
   line-height: 2em;
+  margin: 20px;
+  justify-content: center;
 }
