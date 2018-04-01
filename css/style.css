@@ -11,6 +11,25 @@ main {
 header {
 /*  background-color: lightgrey; */
 }
+button {
+  height: 2em;
+  margin-bottom: 20px;
+}
+.admin-zone {
+  display: flex;
+  flex-flow: wrap;
+}
+.adm-btn {
+  width: 100%;
+}
+.adm-input{
+  line-height: 2.5em;
+  text-align: right;
+  width: 50%
+}
+.validate {
+  width: 50%;
+}
 .cat-display {
   background-color: lightgrey;
   width: 80%;
