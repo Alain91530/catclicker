@@ -7,6 +7,7 @@ class Cat {
     this.name = name;
     this.picture = picture;
     this.clickCount = 0;
+    this.selected = false;
   }
 }
 
@@ -26,38 +27,73 @@ let model = {
 /******************************************************************************/
 /*                 View 1: the menu                                           */
 /******************************************************************************/
+
 /* The elements where we await clicks */
-//let theCats = document.getElementsByClassName('cat');
 let listView = {
   init: function() {
-    this.catList = document.getElementById('navMenu');
-    this.render();
-  },
-  render: function() {
     let cats = octopus.getCats();
-    let catElement;
     let cat;
+    let catElement;
     let i;
-
+    this.catList = document.getElementById('navMenu');
+    // Create the DOM elements for the cat menu
     for (i = 0; i< cats.length; i++) {
       cat = cats[i];
       /* for each cat construct an html node */
       catElement = document.createElement('p');
       catElement.textContent = `${cat.name}`;
-      catElement.className+='navElement';
-      /*Append the node to the menu */
+      catElement.className+='nav-element';
+      /* Append it to the DOM */
+      this.catList.appendChild(catElement);
+    }
+    this.render();
+  },
 
+  render: function() {
+    let cats = octopus.getCats();
+    let catElements = document.getElementsByClassName('nav-element');
+    let cat;
+    let catElement;
+    let i;
+    /* For each cat set an event on click and render the selected cat with
+       a different class to higjligth it
+     */
+    for (i = 0; i< cats.length; i++) {
+      cat = cats[i];
+      catElement = catElements[i];
+      /* set or unset the selected class */
+      (cat.selected) ? catElement.classList.add('selected') :
+        catElement.classList.remove('selected');
+      /* Set an event listener when a cat name is clicked with a closure in the
+       * callback fonction to have catClicked.clicks pointing at the right place
+       */
       catElement.addEventListener('click', (function(catClicked) {
         return function() {
           octopus.setCurrentCat(catClicked);
+          listView.updateSelected();
           catView.render();
         };
       })(cat));
-      this.catList.appendChild(catElement);
-      /* Set an event listener when a cat name is clicked */
+    }
+  },
+
+  /* Updates the right cat in the cat menu */
+  updateSelected: function() {
+    let cats = octopus.getCats();
+    let catElements = document.getElementsByClassName('nav-element');
+    let cat;
+    let catElement;
+    let i;
+
+    for (i = 0; i< cats.length; i++) {
+      cat = cats[i];
+      catElement = catElements[i];
+      (cat.selected) ? catElement.classList.add('selected') :
+        catElement.classList.remove('selected');
     }
   }
 };
+
 /******************************************************************************/
 /*                View 2 : the cat to click                                   */
 /******************************************************************************/
@@ -83,17 +119,23 @@ let catView = {
 let octopus = {
   init: function() {
     model.currentCat = model.cats[0];
+    model.cats[0].selected = true;
     listView.init();
     catView.init();
   },
   getCurrentCat: function() {
     return model.currentCat;
   },
+  getCurrentCatindex() {
+    return model.currentCatIndex;
+  },
   getCats() {
     return model.cats;
   },
   setCurrentCat: function(cat) {
+    model.cats[model.cats.indexOf(model.currentCat)].selected = false;
     model.currentCat = cat;
+    model.cats[model.cats.indexOf(model.currentCat)].selected = true;
   },
   addClick: function() {
     model.currentCat.clickCount++;

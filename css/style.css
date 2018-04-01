@@ -28,3 +28,10 @@ header {
   margin: 20px;
   justify-content: center;
 }
+.nav-element {
+  cursor: pointer;
+}
+.selected {
+  color: white;
+  background-color: black;
+}
