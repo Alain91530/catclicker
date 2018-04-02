@@ -14,6 +14,7 @@ class Cat {
 /* initialize array of different cats */
 let model = {
   currentCat: null,
+  adminMode: false,
   cats: [
     new Cat('tom', 'img/cat-1.jpg'),
     new Cat('pussy cat','img/cat-2.jpg'),
@@ -61,6 +62,7 @@ let listView = {
     for (i = 0; i< cats.length; i++) {
       cat = cats[i];
       catElement = catElements[i];
+      catElement.textContent = `${cat.name}`;
       /* set or unset the selected class */
       (cat.selected) ? catElement.classList.add('selected') :
         catElement.classList.remove('selected');
@@ -72,6 +74,7 @@ let listView = {
           octopus.setCurrentCat(catClicked);
           listView.updateSelected();
           catView.render();
+          adminView.render();
         };
       })(cat));
     }
@@ -112,16 +115,52 @@ let catView = {
     this.image.addEventListener('click', octopus.addClick);
   }
 };
-
+/******************************************************************************/
+/*              View 3 : Admin pannel                                         */
+/******************************************************************************/
+let adminView ={
+  init: function() {
+    let adminInput = document.getElementsByClassName('adm-input')[0];
+    let adminValidate = document.getElementsByClassName('validate')[0];
+    document.getElementById('admin').addEventListener('click', octopus.setAdminMode);
+    document.getElementById('cancel').addEventListener('click', octopus.cancelInput);
+    document.getElementById('save').addEventListener('click', octopus.saveCat);
+    if (!octopus.getAdminMode()) {
+      adminInput.classList.add('hidden');
+      adminValidate.classList.add('hidden');
+    }
+  },
+  render: function() {
+    let currentCat = octopus.getCurrentCat();
+    let adminInput = document.getElementsByClassName('adm-input')[0];
+    let adminValidate = document.getElementsByClassName('validate')[0];
+    if (!octopus.getAdminMode()) {
+      adminInput.classList.add('hidden');
+      adminValidate.classList.add('hidden');
+    }
+    else {
+      adminInput.classList.remove('hidden');
+      adminValidate.classList.remove('hidden');
+      document.getElementById('name-of-cat').value = currentCat.name;
+      document.getElementById('cat-img').value = currentCat.picture;
+      document.getElementById('click-count').value = currentCat.clickCount;
+    }
+  }
+};
 /******************************************************************************/
 /*              Octopus                                                       */
 /******************************************************************************/
 let octopus = {
+
   init: function() {
     model.currentCat = model.cats[0];
     model.cats[0].selected = true;
     listView.init();
     catView.init();
+    adminView.init();
+  },
+  getAdminMode: function() {
+    return model.adminMode;
   },
   getCurrentCat: function() {
     return model.currentCat;
@@ -132,10 +171,27 @@ let octopus = {
   getCats() {
     return model.cats;
   },
+  setAdminMode: function() {
+    model.adminMode = !model.adminMode;
+    adminView.render();
+  },
   setCurrentCat: function(cat) {
     model.cats[model.cats.indexOf(model.currentCat)].selected = false;
     model.currentCat = cat;
     model.cats[model.cats.indexOf(model.currentCat)].selected = true;
+  },
+  cancelInput: function() {
+    adminView.render();
+  },
+  saveCat: function() {
+    let index;
+    model.currentCat.name = document.getElementById('name-of-cat').value;
+    model.currentCat.picture = document.getElementById('cat-img').value;
+    model.currentCat.clickCount = parseInt(document.getElementById('click-count').value,10);
+    index=model.cats.indexOf(model.currentCat);
+    model.cats[index] = model.currentCat;
+    catView.render();
+    listView.render();
   },
   addClick: function() {
     model.currentCat.clickCount++;
